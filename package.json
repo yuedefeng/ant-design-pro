@@ -1,6 +1,6 @@
 {
   "name": "ant-design-pro-simple",
-  "version": "0.2.3-rc.1",
+  "version": "0.3.0",
   "description": "An out-of-box UI solution for enterprise applications",
   "private": true,
   "scripts": {
@@ -19,8 +19,8 @@
     "test:all": "node ./tests/run-tests.js"
   },
   "dependencies": {
-    "ant-design-pro": "^0.2.3-rc.1",
-    "antd": "^3.0.0-beta.1",
+    "ant-design-pro": "^0.3.0",
+    "antd": "^3.0.0",
     "babel-runtime": "^6.9.2",
     "classnames": "^2.2.5",
     "core-js": "^2.5.1",
@@ -76,27 +76,14 @@
     "nightmare": "^2.10.0"
   },
   "babel": {
-    "presets": [
-      "env",
-      "react"
-    ],
-    "plugins": [
-      "transform-decorators-legacy",
-      "transform-class-properties"
-    ]
+    "presets": ["env", "react"],
+    "plugins": ["transform-decorators-legacy", "transform-class-properties"]
   },
   "jest": {
-    "setupFiles": [
-      "<rootDir>/tests/setupTests.js"
-    ],
-    "testMatch": [
-      "**/?(*.)(spec|test|e2e).js?(x)"
-    ],
+    "setupFiles": ["<rootDir>/tests/setupTests.js"],
+    "testMatch": ["**/?(*.)(spec|test|e2e).js?(x)"],
     "setupTestFrameworkScriptFile": "<rootDir>/tests/jasmine.js",
-    "moduleFileExtensions": [
-      "js",
-      "jsx"
-    ],
+    "moduleFileExtensions": ["js", "jsx"],
     "moduleNameMapper": {
       "\\.(css|less)$": "<rootDir>/tests/styleMock.js"
     }
