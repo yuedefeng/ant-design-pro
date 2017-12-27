@@ -1,7 +1,7 @@
 import { routerRedux } from 'dva/router';
 import { fakeAccountLogin } from '../services/api';
 import { setAuthority } from '../utils/authority';
-import { reloadAuthorized } from '../utils/Authorized';
+import { storeAuthenticationToken, clearAuthenticationToken } from '../utils/token';
 
 export default {
   namespace: 'login',
@@ -15,11 +15,15 @@ export default {
       const response = yield call(fakeAccountLogin, payload);
       yield put({
         type: 'changeLoginStatus',
-        payload: response,
+        payload: {
+          status: response.status === 200 ? 'ok' : 'error',
+          type: 'account',
+          Authorization: response.headers.get('Authorization'),
+          rememberMe: payload.rememberMe,
+        },
       });
       // Login successfully
-      if (response.status === 'ok') {
-        reloadAuthorized();
+      if (response.status === 200) {
         yield put(routerRedux.push('/'));
       }
     },
@@ -38,8 +42,7 @@ export default {
             status: false,
             currentAuthority: 'guest',
           },
-        });
-        reloadAuthorized();
+        })
         yield put(routerRedux.push('/user/login'));
       }
     },
@@ -48,6 +51,17 @@ export default {
   reducers: {
     changeLoginStatus(state, { payload }) {
       setAuthority(payload.currentAuthority);
+      /** ±£¥ÊJava Web Token */
+      let jwt = '';
+      if (payload.status === 'ok') {
+        const bearerToken = payload.Authorization;
+        if (bearerToken && bearerToken.slice(0, 7) === 'Bearer ') {
+          jwt = bearerToken.slice(7, bearerToken.length);
+          storeAuthenticationToken(jwt, payload.rememberMe);
+        }
+      } else {
+        clearAuthenticationToken();
+      }
       return {
         ...state,
         status: payload.status,

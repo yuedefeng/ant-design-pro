@@ -1,5 +1,6 @@
 import fetch from 'dva/fetch';
 import { notification } from 'antd';
+import { getToken } from './token';
 import { routerRedux } from 'dva/router';
 import store from '../index';
 
@@ -56,9 +57,19 @@ export default function request(url, options) {
     newOptions.body = JSON.stringify(newOptions.body);
   }
 
+  /** Add JWT to Header */
+  newOptions.headers = newOptions.headers || {};
+  const token = getToken();
+  if (token) {
+    newOptions.headers.Authorization = `Bearer ${token}`;
+  }
+
   return fetch(url, newOptions)
     .then(checkStatus)
     .then((response) => {
+      if (newOptions.needHeader) {
+        return response;
+      }
       if (newOptions.method === 'DELETE' || response.status === 204) {
         return response.text();
       }

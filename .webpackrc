@@ -18,5 +18,11 @@
   },
   "publicPath": "/",
   "disableDynamicImport": true,
-  "hash": true
+  "hash": true,
+  "proxy":{
+    "/api/authenticate":{
+      "target":"http://localhost:8080",
+      "changeOrigin":true
+    }
+  }
 }

@@ -1,8 +1,10 @@
-// use localStorage to store the role info, which might be sent from server in actual project.
-export function getRole() {
-  return localStorage.getItem('antd-pro-role') || 'guest';
-}
+import { getAccountFromJwt } from './token';
 
-export function setRole(role) {
-  return localStorage.setItem('antd-pro-role', role);
+export function getRole() {
+  const login = getAccountFromJwt();
+  if (login) {
+    return login.authorities;
+  } else {
+    return ['ROLE_GUEST'];
+  }
 }
