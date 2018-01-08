@@ -23,6 +23,10 @@
     "/api/authenticate":{
       "target":"http://localhost:8080",
       "changeOrigin":true
+    },
+    "/api/base-users":{
+      "target":"http://localhost:8080",
+      "changeOrigin":true
     }
   }
 }

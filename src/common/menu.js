@@ -114,6 +114,14 @@ const menuData = [{
     path: 'register-result',
   }],
 }, {
+  name: '系统管理',
+  icon: 'user',
+  path: 'system',
+  children: [{
+    name: '用户管理',
+    path: 'user',
+  }],
+}, {
   name: '使用文档',
   icon: 'book',
   path: 'http://pro.ant.design/docs/getting-started',
