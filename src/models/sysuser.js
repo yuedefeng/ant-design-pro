@@ -64,11 +64,12 @@ export default {
       });
       if (callback) callback(response);
     },
-    *new({ put }) {
+    *new({ callback }, { put }) {
       yield put({
         type: 'showEntity',
         payload: null,
       });
+      if (callback) callback();
     },
     *checkRepeat({ payload, callback }, { call }) {
       const response = yield call(checkRepeat, payload);
