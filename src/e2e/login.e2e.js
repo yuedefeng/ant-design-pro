@@ -7,7 +7,7 @@ describe('Login', () => {
     page
       .goto('http://localhost:8000/')
       .evaluate(() => {
-        window.localStorage.setItem('antd-pro-authority', 'guest');
+        window.localStorage.setItem('authenticationToken', 'ROLE_GUEST');
       })
       .goto('http://localhost:8000/#/user/login');
   });

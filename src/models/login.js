@@ -1,6 +1,5 @@
 import { routerRedux } from 'dva/router';
 import { fakeAccountLogin } from '../services/api';
-import { setAuthority } from '../utils/authority';
 import { storeAuthenticationToken, clearAuthenticationToken } from '../utils/token';
 
 export default {
@@ -50,7 +49,6 @@ export default {
 
   reducers: {
     changeLoginStatus(state, { payload }) {
-      setAuthority(payload.currentAuthority);
       /** ±£¥ÊJava Web Token */
       let jwt = '';
       if (payload.status === 'ok') {

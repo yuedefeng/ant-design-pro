@@ -27,7 +27,7 @@ const menuData = [{
     path: 'step-form',
   }, {
     name: '高级表单',
-    authority: 'admin',
+    authority: 'ROLE_ADMIN',
     path: 'advanced-form',
   }],
 }, {
@@ -67,7 +67,7 @@ const menuData = [{
   }, {
     name: '高级详情页',
     path: 'advanced',
-    authority: 'admin',
+    authority: 'ROLE_ADMIN',
   }],
 }, {
   name: '结果页',
@@ -102,7 +102,7 @@ const menuData = [{
   name: '账户',
   icon: 'user',
   path: 'user',
-  authority: 'guest',
+  authority: 'ROLE_GUEST',
   children: [{
     name: '登录',
     path: 'login',

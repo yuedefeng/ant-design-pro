@@ -24,21 +24,43 @@ const checkPermissions = (authority, currentAuthority, target, Exception) => {
   if (!authority) {
     return target;
   }
-  // 数组处理
-  if (Array.isArray(authority)) {
-    if (authority.indexOf(currentAuthority) >= 0) {
-      return target;
+  if (Array.isArray(currentAuthority)) {
+    for (let i = 0; i < currentAuthority.length; i += 1) {
+      const tmpAuthority = currentAuthority[i];
+      // 数组处理
+      if (Array.isArray(authority)) {
+        if (authority.indexOf(tmpAuthority) >= 0) {
+          return target;
+        }
+        return Exception;
+      }
+
+      // string 处理
+      if (typeof authority === 'string') {
+        if (authority === tmpAuthority) {
+          return target;
+        }
+        return Exception;
+      }
     }
-    return Exception;
+  } else {
+    // 数组处理
+    if (Array.isArray(authority)) {
+      if (authority.indexOf(currentAuthority) >= 0) {
+        return target;
+      }
+      return Exception;
+    }
+
+    // string 处理
+    if (typeof authority === 'string') {
+      if (authority === currentAuthority) {
+        return target;
+      }
+      return Exception;
+    }
   }
 
-  // string 处理
-  if (typeof authority === 'string') {
-    if (authority === currentAuthority) {
-      return target;
-    }
-    return Exception;
-  }
 
   // Promise 处理
   if (isPromise(authority)) {

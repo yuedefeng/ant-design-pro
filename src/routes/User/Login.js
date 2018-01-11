@@ -24,10 +24,15 @@ export default class LoginPage extends Component {
   handleSubmit = (err, values) => {
     const { type } = this.state;
     if (!err) {
+      const data = {
+        username: values.userName,
+        password: values.password,
+        rememberMe: this.state.autoLogin,
+      };
       this.props.dispatch({
         type: 'login/login',
         payload: {
-          ...values,
+          ...data,
           type,
         },
       });
@@ -38,27 +43,6 @@ export default class LoginPage extends Component {
     this.setState({
       autoLogin: e.target.checked,
     });
-  }
-  handleSubmit = (e) => {
-    e.preventDefault();
-    this.props.form.validateFields({ force: true },
-      (err, values) => {
-        if (!err) {
-          const data = {
-            username: values.userName,
-            password: values.password,
-            rememberMe: values.remember,
-          };
-          this.props.dispatch({
-            type: 'login/login',
-            payload: {
-              ...data,
-              type: this.state.type,
-            },
-          });
-        }
-      }
-    );
   }
 
   renderMessage = (content) => {
