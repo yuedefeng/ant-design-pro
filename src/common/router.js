@@ -170,6 +170,18 @@ export const getRouterData = (app) => {
     '/system/user/edit': {
       component: dynamicWrapper(app, ['sysuser'], () => import('../routes/System/User/edit')),
     },
+    '/system/config/permission': {
+      component: dynamicWrapper(app, ['sysuser'], () => import('../routes/System/Config/permission')),
+    },
+    '/system/config/role': {
+      component: dynamicWrapper(app, ['sysuser'], () => import('../routes/System/Config/role')),
+    },
+    '/system/config/modules': {
+      component: dynamicWrapper(app, ['sysuser'], () => import('../routes/System/Config/modules')),
+    },
+    '/system/config/resource': {
+      component: dynamicWrapper(app, ['sysuser'], () => import('../routes/System/Config/resource')),
+    },
   };
   // Get name from ./menu.js or just set it in the router data.
   const menuData = getFlatMenuData(getMenuData());

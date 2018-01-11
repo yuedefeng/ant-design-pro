@@ -3,7 +3,7 @@ import { connect } from 'dva';
 import moment from 'moment';
 import { routerRedux } from 'dva/router';
 import { Row, Col, Card, Form, Input, Button, DatePicker } from 'antd';
-import CommonTable from '../../../components/CommonTable';
+import UserTable from '../../../components/UserTable';
 import PageHeaderLayout from '../../../layouts/PageHeaderLayout';
 
 import styles from './style.less';
@@ -165,7 +165,7 @@ export default class list extends PureComponent {
             <div className={styles.tableListForm}>
               {this.renderSimpleForm()}
             </div>
-            <CommonTable
+            <UserTable
               loading={sysuserLoading}
               data={data}
               columns={columns}
@@ -176,6 +176,7 @@ export default class list extends PureComponent {
               setCustomState={this.setCustomState}
               preType="user"
               prePath="/system/user"
+              preSetPath="/system/config"
             />
           </div>
         </Card>
