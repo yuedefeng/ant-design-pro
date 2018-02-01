@@ -1,7 +1,7 @@
-import { queryUser, removeUser, createUser, updateUser, getUser, checkRepeat, resetPassword } from '../services/sysuser';
+import { checkRepeat, queryOrganize, removeOrganize, createOrganize, updateOrganize, getOrganize, getTree, removeOrganizeTree } from '../services/organize';
 
 export default {
-  namespace: 'sysuser',
+  namespace: 'organize',
 
   state: {
     data: {
@@ -10,15 +10,15 @@ export default {
     },
     entity: null,
     loading: true,
+    treeDate: null,
   },
-
   effects: {
     *fetch({ payload }, { call, put }) {
       yield put({
         type: 'changeLoading',
         payload: true,
       });
-      const response = yield call(queryUser, payload);
+      const response = yield call(queryOrganize, payload);
       yield put({
         type: 'save',
         payload: response,
@@ -29,35 +29,54 @@ export default {
       });
     },
     *add({ payload, callback }, { call, put }) {
-      const response = yield call(createUser, payload);
+      const response = yield call(createOrganize, payload);
       yield put({
         type: 'showEntity',
         payload: response.returnData,
       });
       if (callback) callback(response);
     },
+    *removeTree({ payload, callback }, { call, put }) {
+      yield put({
+        type: 'changeLoading',
+        payload: true,
+      });
+      const response = yield call(removeOrganizeTree, payload);
+      yield put({
+        type: 'changeLoading',
+        payload: false,
+      });
+      const responseJSON = JSON.parse(response);
+      if (callback) callback(responseJSON);
+    },
     *remove({ payload, callback }, { call, put }) {
       yield put({
         type: 'changeLoading',
         payload: true,
       });
-      yield call(removeUser, payload);
+      yield call(removeOrganize, payload);
       yield put({
         type: 'changeLoading',
         payload: false,
       });
-
       if (callback) callback();
     },
     *get({ payload }, { call, put }) {
-      const response = yield call(getUser, payload);
+      const response = yield call(getOrganize, payload);
       yield put({
         type: 'showEntity',
         payload: response,
       });
     },
+    *getTree({ payload }, { call, put }) {
+      const response = yield call(getTree, payload);
+      yield put({
+        type: 'showTreeData',
+        payload: response.returnData,
+      });
+    },
     *update({ payload, callback }, { call, put }) {
-      const response = yield call(updateUser, payload);
+      const response = yield call(updateOrganize, payload);
       yield put({
         type: 'showEntity',
         payload: response.returnData,
@@ -75,10 +94,6 @@ export default {
       const response = yield call(checkRepeat, payload);
       if (callback) callback(response);
     },
-    *resetPassword({ payload, callback }, { call }) {
-      const response = yield call(resetPassword, payload);
-      if (callback) callback(response);
-    },
   },
 
   reducers: {
@@ -92,6 +107,12 @@ export default {
       return {
         ...state,
         entity: action.payload,
+      };
+    },
+    showTreeData(state, action) {
+      return {
+        ...state,
+        treeData: action.payload,
       };
     },
     changeLoading(state, action) {

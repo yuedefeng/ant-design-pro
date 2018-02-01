@@ -2,17 +2,14 @@ import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
 import { routerRedux } from 'dva/router';
-import { Card, Form, DatePicker, Input, Radio, Button, message, Modal, TreeSelect, Select } from 'antd';
+import { Card, Form, DatePicker, Input, Radio, Button, message, Modal, TreeSelect } from 'antd';
 import PageHeaderLayout from '../../../layouts/PageHeaderLayout';
 import FooterToolbar from '../../../components/FooterToolbar';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const { TreeNode } = TreeSelect;
-const { Option } = Select;
-
 @connect(state => ({
-  sysuser: state.sysuser,
   organize: state.organize,
 }))
 @Form.create()
@@ -20,7 +17,6 @@ export default class edit extends PureComponent {
   state = {
     entityId: null,
   };
-
   componentWillMount() {
     const { dispatch, location } = this.props;
     dispatch({
@@ -34,42 +30,34 @@ export default class edit extends PureComponent {
         entityId: location.query.id,
       });
       dispatch({
-        type: 'sysuser/get',
+        type: 'organize/get',
         payload: {
           ...(location.query),
         },
       });
     } else {
       dispatch({
-        type: 'sysuser/new',
+        type: 'organize/new',
       });
     }
   }
-
   goBackClick = () => {
     const { dispatch } = this.props;
-    dispatch(routerRedux.push('/system/user'));
+    dispatch(routerRedux.push('/system/organize/treeTable'));
   };
-
   handleSubmit = (e) => {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       const saveValues = {
-        ...this.props.sysuser.entity,
+        ...this.props.organize.entity,
         ...values,
-        birthday: moment(values.birthday).format('YYYY-MM-DD'),
+        // birthday: moment(values.birthday).format('YYYY-MM-DD'),
         id: this.state.entityId,
-        userOnLine: 0,
-        isStaff: 0,
-        isVisible: 1,
-        deleteMark: 0,
-        enabled: 1,
       };
-      let dispatchType = 'sysuser/add';
+      let dispatchType = 'organize/add';
       if (this.state.entityId != null && this.state.entityId > 0) {
-        dispatchType = 'sysuser/update';
+        dispatchType = 'organize/update';
       }
-
       if (!err) {
         this.props.dispatch({
           type: dispatchType,
@@ -83,21 +71,17 @@ export default class edit extends PureComponent {
               });
             } else {
               message.success('保存成功');
-              this.props.dispatch(routerRedux.push('/system/user'));
+              this.props.dispatch(routerRedux.push('/system/organize/list'));
             }
           },
         });
       }
     });
   };
-
   checkUsernameRepeat = (rule, value, callback) => {
     this.props.dispatch({
-      type: 'sysuser/checkRepeat',
-      payload: {
-        id: this.state.entityId,
-        login: value,
-      },
+      type: 'organize/checkRepeat',
+      payload: value,
       callback: (resp) => {
         if (resp.returnData === false) {
           callback();
@@ -107,9 +91,8 @@ export default class edit extends PureComponent {
       },
     });
   }
-
   render() {
-    const { submitting, sysuser: { entity }, organize: { treeData } } = this.props;
+    const { submitting, organize: { entity, treeData } } = this.props;
     const { getFieldDecorator } = this.props.form;
     const formItemLayout = {
       labelCol: { span: 5 },
@@ -131,139 +114,153 @@ export default class edit extends PureComponent {
             style={{ marginTop: 8 }}
           >
             <FormItem
-              label="用户名"
+              label="层级编码"
               {...formItemLayout}
             >
-              {getFieldDecorator('login', {
-                initialValue: entity != null ? entity.login : '',
-                rules: [{ required: true, message: '用户名不能为空！' }, { validator: this.checkUsernameRepeat }],
+              {getFieldDecorator('code', {
+                initialValue: entity != null ? entity.code : '',
+                rules: [{ required: true, message: '层级编码不能为空！' }],
               })(
                 <Input placeholder="请输入" />
               )}
             </FormItem>
             <FormItem
-              label="用户姓名"
+              label="父级部门"
               {...formItemLayout}
             >
-              {getFieldDecorator('realName', {
-                initialValue: entity != null ? entity.realName : '',
-                rules: [{ required: true, message: '用户姓名' }],
-              })(
-                <Input placeholder="请输入" />
-              )}
-            </FormItem>
-            <FormItem
-              label="公司"
-              {...formItemLayout}
-            >
-              {getFieldDecorator('company', {
-                initialValue: entity != null ? entity.company : '',
-                rules: [{ required: true, message: '公司' }],
-              })(
-                <Input placeholder="请输入" />
-              )}
-            </FormItem>
-            <FormItem
-              label="部门"
-              {...formItemLayout}
-            >
-              {getFieldDecorator('department', {
-                initialValue: entity != null ? entity.department : '',
-                rules: [{ required: true, message: '部门' }],
+              {getFieldDecorator('parentID', {
+                initialValue: entity != null ? entity.parentID : '',
+                rules: [{ required: true, message: '父级部门不能为空！' }],
               })(
                 treeData
-                  ? <TreeSelect placeholder="请选部门" treeDefaultExpandAll >{ loop(treeData) }</TreeSelect>
+                  ? <TreeSelect placeholder="请选择树" treeDefaultExpandAll >{ loop(treeData) }</TreeSelect>
                   : <input />
               )}
             </FormItem>
             <FormItem
-              label="工作组"
+              label="部门名称"
               {...formItemLayout}
             >
-              {getFieldDecorator('workgroup', {
-                initialValue: entity != null ? entity.workgroup : '',
-                rules: [{ required: true, message: '工作组' }],
+              {getFieldDecorator('fullName', {
+                initialValue: entity != null ? entity.fullName : '',
+                rules: [{ required: true, message: '部门名称不能为空！' }],
               })(
                 <Input placeholder="请输入" />
               )}
             </FormItem>
             <FormItem
-              label="职责"
+              label="类型"
               {...formItemLayout}
             >
-              {getFieldDecorator('duty', {
-                initialValue: entity != null ? entity.duty : '',
-                rules: [{ required: true, message: '职责' }],
-              })(
-                <Select>
-                  <Option value="总经理">总经理</Option>
-                  <Option value="部门经理">部门经理</Option>
-                  <Option value="科长">科长</Option>
-                  <Option value="职员">职员</Option>
-                </Select>
-              )}
-            </FormItem>
-            <FormItem
-              label="称谓"
-              {...formItemLayout}
-            >
-              {getFieldDecorator('title', {
-                initialValue: entity != null ? entity.title : '',
-                rules: [{ required: true, message: '称谓' }],
+              {getFieldDecorator('category', {
+                initialValue: entity != null ? entity.category : '',
+                rules: [{ required: true, message: '类型' }],
               })(
                 <Input placeholder="请输入" />
               )}
             </FormItem>
             <FormItem
-              label="电子邮箱"
+              label="固定电话"
               {...formItemLayout}
             >
-              {getFieldDecorator('email', {
-                initialValue: entity != null ? entity.email : '',
-                rules: [
-                  { type: 'email', message: '邮箱格式非法!' },
-                  { required: true, message: '电子邮箱' },
-                ],
+              {getFieldDecorator('outerPhone', {
+                initialValue: entity != null ? entity.outerPhone : '',
+                rules: [{ required: true, message: '固定电话' }],
               })(
                 <Input placeholder="请输入" />
               )}
             </FormItem>
             <FormItem
-              label="出生日期"
+              label="移动电话"
               {...formItemLayout}
             >
-              {getFieldDecorator('birthday', {
-                initialValue: entity && entity.birthday ? moment(entity.birthday, 'YYYY-MM-DD') : null,
-                rules: [{ required: true, message: '出生日期' }],
+              {getFieldDecorator('innerPhone', {
+                initialValue: entity != null ? entity.innerPhone : '',
+                rules: [{ required: true, message: '移动电话' }],
               })(
-                <DatePicker placeholder="出生日期" />
+                <Input placeholder="请输入" />
               )}
             </FormItem>
             <FormItem
-              label="性别"
+              label="地址"
               {...formItemLayout}
             >
-              {getFieldDecorator('sex', {
-                initialValue: entity != null ? entity.sex : '1',
-                rules: [{ required: true, message: '性别' }],
+              {getFieldDecorator('address', {
+                initialValue: entity != null ? entity.address : '',
+                rules: [{ required: true, message: '地址' }],
+              })(
+                <Input placeholder="请输入" />
+              )}
+            </FormItem>
+            <FormItem
+              label="后台通知地址"
+              {...formItemLayout}
+            >
+              {getFieldDecorator('web', {
+                initialValue: entity != null ? entity.web : '',
+                rules: [{ required: true, message: '后台通知地址' }],
+              })(
+                <Input placeholder="请输入" />
+              )}
+            </FormItem>
+            <FormItem
+              label="联系人"
+              {...formItemLayout}
+            >
+              {getFieldDecorator('manager', {
+                initialValue: entity != null ? entity.manager : '',
+                rules: [{ required: true, message: '联系人' }],
+              })(
+                <Input placeholder="请输入" />
+              )}
+            </FormItem>
+            <FormItem
+              label="是否可用"
+              {...formItemLayout}
+            >
+              {getFieldDecorator('enabled', {
+                initialValue: entity != null ? entity.enabled : '',
+                rules: [{ required: true, message: '是否可用' }],
               })(
                 <RadioGroup>
-                  <Radio value="1">男</Radio>
-                  <Radio value="0">女</Radio>
+                  <Radio value={1}>是</Radio>
+                  <Radio value={0}>否</Radio>
                 </RadioGroup>
               )}
             </FormItem>
             <FormItem
-              label="家庭住址"
+              label="组织"
               {...formItemLayout}
             >
-              {getFieldDecorator('homeAddress', {
-                initialValue: entity != null ? entity.homeAddress : '',
-                rules: [{ required: true, message: '家庭住址' }],
+              {getFieldDecorator('isInnerOrganize', {
+                initialValue: entity != null ? entity.isInnerOrganize : '',
+                rules: [{ required: true, message: '组织' }],
               })(
                 <Input placeholder="请输入" />
               )}
             </FormItem>
+            <FormItem
+              label="创建时间"
+              {...formItemLayout}
+            >
+              {getFieldDecorator('createdDate', {
+                initialValue: entity && entity.createdDate ? moment(entity.createdDate, 'YYYY-MM-DD') : null,
+                rules: [{ required: true, message: '创建时间' }],
+              })(
+                <DatePicker placeholder="创建时间" />
+              )}
+            </FormItem>
+            {/* <FormItem */}
+            {/* label="家庭住址" */}
+            {/* {...formItemLayout} */}
+            {/* > */}
+            {/* {getFieldDecorator('homeAddress', { */}
+            {/* initialValue: entity != null ? entity.homeAddress : '', */}
+            {/* rules: [{ required: true, message: '家庭住址' }], */}
+            {/* })( */}
+            {/* <Input placeholder="请输入" /> */}
+            {/* )} */}
+            {/* </FormItem> */}
             <FooterToolbar style={{ width: '100%' }}>
               <Button type="primary" htmlType="submit" loading={submitting}>
                 提交

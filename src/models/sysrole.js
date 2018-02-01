@@ -1,7 +1,7 @@
-import { queryUser, removeUser, createUser, updateUser, getUser, checkRepeat, resetPassword } from '../services/sysuser';
+import { queryRole, removeRole, createRole, updateRole, getRole, checkRepeat } from '../services/sysrole';
 
 export default {
-  namespace: 'sysuser',
+  namespace: 'sysrole',
 
   state: {
     data: {
@@ -18,7 +18,7 @@ export default {
         type: 'changeLoading',
         payload: true,
       });
-      const response = yield call(queryUser, payload);
+      const response = yield call(queryRole, payload);
       yield put({
         type: 'save',
         payload: response,
@@ -29,7 +29,7 @@ export default {
       });
     },
     *add({ payload, callback }, { call, put }) {
-      const response = yield call(createUser, payload);
+      const response = yield call(createRole, payload);
       yield put({
         type: 'showEntity',
         payload: response.returnData,
@@ -41,7 +41,7 @@ export default {
         type: 'changeLoading',
         payload: true,
       });
-      yield call(removeUser, payload);
+      yield call(removeRole, payload);
       yield put({
         type: 'changeLoading',
         payload: false,
@@ -50,14 +50,14 @@ export default {
       if (callback) callback();
     },
     *get({ payload }, { call, put }) {
-      const response = yield call(getUser, payload);
+      const response = yield call(getRole, payload);
       yield put({
         type: 'showEntity',
         payload: response,
       });
     },
     *update({ payload, callback }, { call, put }) {
-      const response = yield call(updateUser, payload);
+      const response = yield call(updateRole, payload);
       yield put({
         type: 'showEntity',
         payload: response.returnData,
@@ -73,10 +73,6 @@ export default {
     },
     *checkRepeat({ payload, callback }, { call }) {
       const response = yield call(checkRepeat, payload);
-      if (callback) callback(response);
-    },
-    *resetPassword({ payload, callback }, { call }) {
-      const response = yield call(resetPassword, payload);
       if (callback) callback(response);
     },
   },

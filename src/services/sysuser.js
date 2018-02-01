@@ -1,7 +1,7 @@
 import request from '../utils/request';
 
 export async function queryUser(params) {
-  return request('/api/base-users/page', {
+  return request('/api/users/page', {
     method: 'POST',
     body: {
       ...params,
@@ -11,13 +11,13 @@ export async function queryUser(params) {
 }
 
 export async function removeUser(params) {
-  return request(`/api/base-users/${params.id}`, {
+  return request(`/api/users/${params.id}`, {
     method: 'DELETE',
   });
 }
 
 export async function createUser(params) {
-  return request('/api/base-users/create', {
+  return request('/api/users/create', {
     method: 'POST',
     body: {
       ...params,
@@ -27,7 +27,7 @@ export async function createUser(params) {
 }
 
 export async function updateUser(params) {
-  return request('/api/base-users/create', {
+  return request('/api/users/create', {
     method: 'POST',
     body: {
       ...params,
@@ -37,7 +37,7 @@ export async function updateUser(params) {
 }
 
 export async function getUser(params) {
-  return request(`/api/base-users/${params.id}`, {
+  return request(`/api/users/${params.id}`, {
     method: 'GET',
     body: {
       method: 'GET',
@@ -46,7 +46,7 @@ export async function getUser(params) {
 }
 
 export async function getAllUser() {
-  return request('/api/base-users/list', {
+  return request('/api/users/list', {
     method: 'POST',
     body: {
       method: 'POST',
@@ -54,11 +54,21 @@ export async function getAllUser() {
   });
 }
 
-export async function checkRepeat(login) {
-  return request('/api/base-users/checkrepeat', {
+export async function checkRepeat(values) {
+  return request('/api/users/checkrepeat', {
     method: 'POST',
     body: {
-      login,
+      ...values,
+      method: 'POST',
+    },
+  });
+}
+
+export async function resetPassword(values) {
+  return request('/api/users/reset-password', {
+    method: 'POST',
+    body: {
+      ...values,
       method: 'POST',
     },
   });

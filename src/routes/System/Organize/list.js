@@ -2,25 +2,21 @@ import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
 import { routerRedux } from 'dva/router';
-import { Row, Col, Card, Form, Input, Button, DatePicker, Modal, message, Alert } from 'antd';
-import UserTable from '../../../components/UserTable';
+import { Row, Col, Card, Form, Input, Button } from 'antd';
+import UserTable from '../../../components/OrganizeTable';
 import PageHeaderLayout from '../../../layouts/PageHeaderLayout';
 
 import styles from './style.less';
 
+const ButtonGroup = Button.Group;
 const FormItem = Form.Item;
-const { RangePicker } = DatePicker;
 
 @connect(state => ({
-  sysuser: state.sysuser,
   organize: state.organize,
 }))
 @Form.create()
-export default class list extends PureComponent {
+export default class organize extends PureComponent {
   state = {
-    rowId: null,
-    rowUserName: '',
-    modalVisible: false,
     queryList: {
       filterList: {},
       pageable: {
@@ -37,16 +33,23 @@ export default class list extends PureComponent {
   componentWillMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'sysuser/fetch',
+      type: 'organize/fetch',
       payload: { ...this.state.queryList },
     });
   }
-
   setCustomState = (queryList) => {
     this.setState({
       ...this.state,
       queryList,
     });
+  };
+  handleClick = () => {
+    const { dispatch } = this.props;
+    dispatch(routerRedux.push('/system/organize/list'));
+  };
+  handleTree = () => {
+    const { dispatch } = this.props;
+    dispatch(routerRedux.push('/system/organize/treeTable'));
   };
 
   handleSearch = (e) => {
@@ -65,7 +68,7 @@ export default class list extends PureComponent {
         },
       };
       dispatch({
-        type: 'sysuser/fetch',
+        type: 'organize/fetch',
         payload: params,
       }).then(() => {
         this.setCustomState(params);
@@ -75,64 +78,24 @@ export default class list extends PureComponent {
 
   handleNewClick = () => {
     const { dispatch } = this.props;
-    dispatch(routerRedux.push('/system/user/edit'));
+    dispatch(routerRedux.push('/system/organize/edit'));
   };
-
-  handleModalVisible = (row) => {
-    this.setState({
-      rowId: row.id,
-      rowUserName: row.realName,
-      addInputValue: '',
-      modalVisible: true,
-    });
-  }
-
-  handleAddInput = (e) => {
-    this.setState({
-      addInputValue: e.target.value,
-    });
-  }
-
-  handleResetPassword = () => {
-    this.props.dispatch({
-      type: 'sysuser/resetPassword',
-      payload: {
-        id: this.state.rowId,
-        newPassword: this.state.addInputValue,
-      },
-      callback: (resp) => {
-        if (resp.returnCode !== 200) {
-          Modal.warning({
-            title: '警告',
-            content: resp.returnMsg,
-            okText: '确定',
-          });
-        } else {
-          message.success('密码重置成功');
-        }
-      },
-    });
-
-    this.setState({
-      modalVisible: false,
-    });
-  }
 
   renderSimpleForm() {
     const { getFieldDecorator } = this.props.form;
     return (
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 4, lg: 24, xl: 48 }}>
-          <Col md={10} sm={24}>
-            <FormItem label="创建日期">
-              {getFieldDecorator('createdDate')(
-                <RangePicker style={{ width: 260 }} placeholder={['开始', '结束']} />
-              )}
-            </FormItem>
-          </Col>
+          {/* <Col md={10} sm={24}> */}
+          {/* <FormItem label="创建日期"> */}
+          {/* {getFieldDecorator('createdDate')( */}
+          {/* <RangePicker style={{ width: 260 }} placeholder={['开始', '结束']} /> */}
+          {/* )} */}
+          {/* </FormItem> */}
+          {/* </Col> */}
           <Col md={8} sm={24}>
-            <FormItem label="用户名">
-              {getFieldDecorator('login')(
+            <FormItem label="部门名称">
+              {getFieldDecorator('fullName')(
                 <Input placeholder="请输入" />
               )}
             </FormItem>
@@ -143,43 +106,58 @@ export default class list extends PureComponent {
           <Col md={4} sm={12} style={{ textAlign: 'left' }}>
             <Button icon="plus" onClick={() => this.handleNewClick()}>新建</Button>
           </Col>
+          <Col md={6} sm={40} style={{ textAlign: 'right' }}>
+            <ButtonGroup>
+              <Button onClick={() => this.handleClick()}>列表表格</Button>
+              <Button onClick={() => this.handleTree()}>树形表格</Button>
+            </ButtonGroup>
+          </Col>
         </Row>
       </Form>
     );
   }
 
   render() {
-    const { dispatch, sysuser: { loading: sysuserLoading, data } } = this.props;
-    const { modalVisible, addInputValue, rowUserName } = this.state;
+    const { dispatch, organize: { loading: organizeLoading, data } } = this.props;
     const columns = [
       {
-        title: '用户名',
-        dataIndex: 'login',
-        width: 100,
-      },
-      {
-        title: '姓名',
-        dataIndex: 'realName',
+        title: '部门全称',
+        dataIndex: 'fullName',
         width: 150,
       },
       {
-        title: '部门',
-        dataIndex: 'department',
+        title: '类型',
+        dataIndex: 'category',
         width: 150,
       },
       {
-        title: '工作组',
-        dataIndex: 'workgroup',
+        title: '固定电话',
+        dataIndex: 'outerPhone',
         width: 150,
       },
       {
-        title: '职务',
-        dataIndex: 'title',
+        title: '移动电话',
+        dataIndex: 'innerPhone',
         width: 150,
       },
       {
-        title: '职责',
-        dataIndex: 'duty',
+        title: '地址',
+        dataIndex: 'address',
+        width: 150,
+      },
+      {
+        title: '后台通知地址',
+        dataIndex: 'web',
+        width: 170,
+      },
+      {
+        title: '联系人',
+        dataIndex: 'manager',
+        width: 150,
+      },
+      {
+        title: '是否可用',
+        dataIndex: 'enabled',
         width: 150,
       },
       {
@@ -187,19 +165,14 @@ export default class list extends PureComponent {
         dataIndex: 'createdDate',
         sorter: true,
         render: val => <span>{moment(val).format('YYYY-MM-DD HH:mm:ss')}</span>,
-        width: 220,
+        width: 260,
       },
       {
         title: '更新时间',
         dataIndex: 'lastModifiedDate',
         sorter: true,
         render: val => <span>{moment(val).format('YYYY-MM-DD HH:mm:ss')}</span>,
-        width: 220,
-      },
-      {
-        title: '描述',
-        dataIndex: 'description',
-        width: 220,
+        width: 260,
       },
     ];
 
@@ -211,7 +184,7 @@ export default class list extends PureComponent {
               {this.renderSimpleForm()}
             </div>
             <UserTable
-              loading={sysuserLoading}
+              loading={organizeLoading}
               data={data}
               columns={columns}
               scroll={{ x: 1300 }}
@@ -219,38 +192,11 @@ export default class list extends PureComponent {
               dispatch={dispatch}
               queryList={this.state.queryList}
               setCustomState={this.setCustomState}
-              handleModalVisible={this.handleModalVisible}
-              preType="sysuser"
-              prePath="/system/user"
-              preSetPath="/system/config"
+              preType="organize"
+              prePath="/system/organize"
             />
           </div>
         </Card>
-        <Modal
-          title="重置密码"
-          visible={modalVisible}
-          onOk={this.handleResetPassword}
-          onCancel={() => this.setState({ modalVisible: false })}
-        >
-          <div>
-            <Alert
-              message={(
-                <div>
-                  当前用户是：<a style={{ fontWeight: 600 }}>{ rowUserName }</a>
-                </div>
-              )}
-              type="info"
-              showIcon
-            />
-          </div>
-          <FormItem
-            labelCol={{ span: 5 }}
-            wrapperCol={{ span: 15 }}
-            label="密码"
-          >
-            <Input placeholder="请输入新密码" onChange={this.handleAddInput} value={addInputValue} />
-          </FormItem>
-        </Modal>
       </PageHeaderLayout>
     );
   }

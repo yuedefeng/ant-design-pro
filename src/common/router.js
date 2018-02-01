@@ -11,7 +11,6 @@ const modelNotExisted = (app, model) => (
     return namespace === model.substring(model.lastIndexOf('/') + 1);
   })
 );
-
 // wrapper of dynamic
 const dynamicWrapper = (app, models, component) => {
   // () => require('module')
@@ -164,11 +163,38 @@ export const getRouterData = (app) => {
     //   component: dynamicWrapper(app, [], () => import('../routes/User/SomeComponent')),
     // },
     // add by garfieldy
+    '/system/organize': {
+      component: dynamicWrapper(app, ['organize'], () => import('../routes/System/Organize')),
+    },
+    '/system/organize/edit': {
+      component: dynamicWrapper(app, ['organize'], () => import('../routes/System/Organize/edit')),
+    },
+    '/system/organize/list': {
+      component: dynamicWrapper(app, ['organize'], () => import('../routes/System/Organize/list')),
+    },
+    '/system/organize/treeEdit': {
+      component: dynamicWrapper(app, ['organize'], () => import('../routes/System/Organize/treeEdit')),
+    },
+    '/system/organize/treeTable': {
+      component: dynamicWrapper(app, ['organize'], () => import('../routes/System/Organize/treeTable')),
+    },
     '/system/user': {
-      component: dynamicWrapper(app, ['sysuser'], () => import('../routes/System/User')),
+      component: dynamicWrapper(app, ['sysuser', 'organize'], () => import('../routes/System/User')),
     },
     '/system/user/edit': {
-      component: dynamicWrapper(app, ['sysuser'], () => import('../routes/System/User/edit')),
+      component: dynamicWrapper(app, ['sysuser', 'organize'], () => import('../routes/System/User/edit')),
+    },
+    '/system/role': {
+      component: dynamicWrapper(app, ['sysrole'], () => import('../routes/System/Role')),
+    },
+    '/system/role/edit': {
+      component: dynamicWrapper(app, ['sysrole'], () => import('../routes/System/Role/edit')),
+    },
+    '/system/role/permissions': {
+      component: dynamicWrapper(app, ['sysrole', 'permission', 'resourcepermission'], () => import('../routes/System/Role/permissions')),
+    },
+    '/system/role/modules': {
+      component: dynamicWrapper(app, ['sysrole'], () => import('../routes/System/Role/modules')),
     },
     '/system/config/permission': {
       component: dynamicWrapper(app, ['sysuser'], () => import('../routes/System/Config/permission')),
@@ -181,6 +207,54 @@ export const getRouterData = (app) => {
     },
     '/system/config/resource': {
       component: dynamicWrapper(app, ['sysuser'], () => import('../routes/System/Config/resource')),
+    },
+    '/system/permission': {
+      component: dynamicWrapper(app, ['permission'], () => import('../routes/System/Permission/index')),
+    },
+    '/system/module': {
+      component: dynamicWrapper(app, ['sysmodule'], () => import('../routes/System/Module')),
+    },
+    '/system/module/edit': {
+      component: dynamicWrapper(app, ['sysmodule'], () => import('../routes/System/Module/edit')),
+    },
+    '/system/module/treetable': {
+      component: dynamicWrapper(app, ['sysmodule'], () => import('../routes/System/Module/treetable')),
+    },
+    '/system/permission/edit': {
+      component: dynamicWrapper(app, ['permission'], () => import('../routes/System/Permission/edit')),
+    },
+    '/system/permission/treelist': {
+      component: dynamicWrapper(app, ['permission'], () => import('../routes/System/Permission/treelist')),
+    },
+    '/system/permission/treeedit': {
+      component: dynamicWrapper(app, ['permission'], () => import('../routes/System/Permission/treeedit')),
+    },
+    '/wechat/material': {
+      component: dynamicWrapper(app, ['wechatmp'], () => import('../routes/Wechat/Material')),
+    },
+    '/wechat/material/edit': {
+      component: dynamicWrapper(app, ['wechatmp'], () => import('../routes/Wechat/Material/edit')),
+    },
+    '/wechat/menus': {
+      component: dynamicWrapper(app, ['wechatmenu'], () => import('../routes/Wechat/Menus')),
+    },
+    '/wechat/menus/edit': {
+      component: dynamicWrapper(app, ['wechatmenu'], () => import('../routes/Wechat/Menus/edit')),
+    },
+    '/wechat/menus/newEdit': {
+      component: dynamicWrapper(app, ['wechatmenu'], () => import('../routes/Wechat/Menus/newEdit')),
+    },
+    '/wechat/keyreply': {
+      component: dynamicWrapper(app, ['keyreply'], () => import('../routes/Wechat/Keyreply')),
+    },
+    '/wechat/keyreply/edit': {
+      component: dynamicWrapper(app, ['keyreply'], () => import('../routes/Wechat/Keyreply/edit')),
+    },
+    '/wechat/reply': {
+      component: dynamicWrapper(app, ['sysreply'], () => import('../routes/Wechat/Reply/list')),
+    },
+    '/wechat/autoreply': {
+      component: dynamicWrapper(app, ['sysreply'], () => import('../routes/Wechat/Autoreply/list')),
     },
   };
   // Get name from ./menu.js or just set it in the router data.

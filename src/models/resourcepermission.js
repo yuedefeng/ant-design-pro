@@ -1,7 +1,14 @@
-import { queryUser, removeUser, createUser, updateUser, getUser, checkRepeat, resetPassword } from '../services/sysuser';
+import {
+  searchBaseResourcePermissions,
+  deleteBaseResourcePermission,
+  getRolePermission,
+  saveRolePermission,
+  updateBaseResourcePermission,
+  getAllBaseResourcePermissions,
+} from '../services/resourcepermission';
 
 export default {
-  namespace: 'sysuser',
+  namespace: 'resourcepermission',
 
   state: {
     data: {
@@ -10,6 +17,8 @@ export default {
     },
     entity: null,
     loading: true,
+    treeData: null,
+    Allid: null,
   },
 
   effects: {
@@ -18,7 +27,7 @@ export default {
         type: 'changeLoading',
         payload: true,
       });
-      const response = yield call(queryUser, payload);
+      const response = yield call(searchBaseResourcePermissions, payload);
       yield put({
         type: 'save',
         payload: response,
@@ -28,12 +37,8 @@ export default {
         payload: false,
       });
     },
-    *add({ payload, callback }, { call, put }) {
-      const response = yield call(createUser, payload);
-      yield put({
-        type: 'showEntity',
-        payload: response.returnData,
-      });
+    *save({ payload, callback }, { call }) {
+      const response = yield call(saveRolePermission, payload);
       if (callback) callback(response);
     },
     *remove({ payload, callback }, { call, put }) {
@@ -41,7 +46,7 @@ export default {
         type: 'changeLoading',
         payload: true,
       });
-      yield call(removeUser, payload);
+      yield call(deleteBaseResourcePermission, payload);
       yield put({
         type: 'changeLoading',
         payload: false,
@@ -49,19 +54,24 @@ export default {
 
       if (callback) callback();
     },
-    *get({ payload }, { call, put }) {
-      const response = yield call(getUser, payload);
+    *get({ payload, callback }, { call, put }) {
+      const response = yield call(getRolePermission, payload);
       yield put({
-        type: 'showEntity',
-        payload: response,
-      });
-    },
-    *update({ payload, callback }, { call, put }) {
-      const response = yield call(updateUser, payload);
-      yield put({
-        type: 'showEntity',
+        type: 'showAllid',
         payload: response.returnData,
       });
+      if (callback) callback(response.returnData);
+    },
+    *getTree({ payload, callback }, { call, put }) {
+      const response = yield call(getAllBaseResourcePermissions, payload);
+      yield put({
+        type: 'showTree',
+        payload: response.returnData,
+      });
+      if (callback) callback(response.returnData);
+    },
+    *update({ payload, callback }, { call }) {
+      const response = yield call(updateBaseResourcePermission, payload);
       if (callback) callback(response);
     },
     *new({ callback }, { put }) {
@@ -70,14 +80,6 @@ export default {
         payload: null,
       });
       if (callback) callback();
-    },
-    *checkRepeat({ payload, callback }, { call }) {
-      const response = yield call(checkRepeat, payload);
-      if (callback) callback(response);
-    },
-    *resetPassword({ payload, callback }, { call }) {
-      const response = yield call(resetPassword, payload);
-      if (callback) callback(response);
     },
   },
 
@@ -92,6 +94,18 @@ export default {
       return {
         ...state,
         entity: action.payload,
+      };
+    },
+    showAllid(state, action) {
+      return {
+        ...state,
+        Allid: action.payload,
+      };
+    },
+    showTree(state, action) {
+      return {
+        ...state,
+        treeData: action.payload,
       };
     },
     changeLoading(state, action) {

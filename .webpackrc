@@ -24,9 +24,53 @@
       "target":"http://localhost:8080",
       "changeOrigin":true
     },
-    "/api/base-users":{
+    "/api/users":{
       "target":"http://localhost:8080",
       "changeOrigin":true
+    },
+    "/api/base-permissions":{
+      "target":"http://localhost:8080",
+      "changeOrigin":true
+    },
+    "/api/base-modules":{
+      "target":"http://localhost:8080",
+      "changeOrigin":true
+    },
+    "/api/base-roles":{
+      "target":"http://localhost:8080",
+      "changeOrigin":true
+    },
+    "/api/wechatmp":{
+      "target":"http://localhost:8080",
+      "changeOrigin":true
+    },
+    "/api/wx-auto-keys":{
+            "target":"http://localhost:8080",
+            "changeOrigin":true
+    },
+    "/api/role-permissions":{
+      "target":"http://localhost:8080",
+      "changeOrigin":true
+    },
+    "/api/base-organizes":{
+      "target":"http://localhost:8080",
+      "changeOrigin":true
+    },
+    "/api/rolemodule":{
+       "target":"http://localhost:8080",
+       "changeOrigin":true
+    },
+    "/api/wx-auto-replies":{
+      "target":"http://localhost:8080",
+      "changeOrigin":true
+   },
+    "/api/wx_menu":{
+           "target":"http://localhost:8080",
+           "changeOrigin":true
+    },
+     "/api/wx-menus":{
+            "target":"http://localhost:8080",
+            "changeOrigin":true
     }
   }
 }

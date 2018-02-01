@@ -1,7 +1,7 @@
-import { queryUser, removeUser, createUser, updateUser, getUser, checkRepeat, resetPassword } from '../services/sysuser';
+import { queryKeyreply, removeKeyreply, createKeyreply, updateKeyreply, getKeyreply } from '../services/keyreply';
 
 export default {
-  namespace: 'sysuser',
+  namespace: 'keyreply',
 
   state: {
     data: {
@@ -10,6 +10,7 @@ export default {
     },
     entity: null,
     loading: true,
+    treeData: null,
   },
 
   effects: {
@@ -18,7 +19,7 @@ export default {
         type: 'changeLoading',
         payload: true,
       });
-      const response = yield call(queryUser, payload);
+      const response = yield call(queryKeyreply, payload);
       yield put({
         type: 'save',
         payload: response,
@@ -29,35 +30,34 @@ export default {
       });
     },
     *add({ payload, callback }, { call, put }) {
-      const response = yield call(createUser, payload);
+      const response = yield call(createKeyreply, payload);
       yield put({
         type: 'showEntity',
         payload: response.returnData,
       });
       if (callback) callback(response);
     },
-    *remove({ payload, callback }, { call, put }) {
+    *remove({ payload }, { call, put }) {
       yield put({
         type: 'changeLoading',
         payload: true,
       });
-      yield call(removeUser, payload);
+      yield call(removeKeyreply, payload);
       yield put({
         type: 'changeLoading',
         payload: false,
       });
-
-      if (callback) callback();
     },
-    *get({ payload }, { call, put }) {
-      const response = yield call(getUser, payload);
+    *get({ payload, callback }, { call, put }) {
+      const response = yield call(getKeyreply, payload);
       yield put({
         type: 'showEntity',
         payload: response,
       });
+      if (callback) callback(response);
     },
     *update({ payload, callback }, { call, put }) {
-      const response = yield call(updateUser, payload);
+      const response = yield call(updateKeyreply, payload);
       yield put({
         type: 'showEntity',
         payload: response.returnData,
@@ -70,14 +70,6 @@ export default {
         payload: null,
       });
       if (callback) callback();
-    },
-    *checkRepeat({ payload, callback }, { call }) {
-      const response = yield call(checkRepeat, payload);
-      if (callback) callback(response);
-    },
-    *resetPassword({ payload, callback }, { call }) {
-      const response = yield call(resetPassword, payload);
-      if (callback) callback(response);
     },
   },
 

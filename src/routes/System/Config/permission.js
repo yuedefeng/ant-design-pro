@@ -10,17 +10,22 @@ const { TreeNode } = Tree;
 const { Description } = DescriptionList;
 const ButtonGroup = Button.Group;
 
+
 @connect(state => ({
   sysuser: state.sysuser,
+  permission: state.permission,
 }))
 @Form.create()
-export default class permission extends PureComponent {
-  state = {
-    entityId: null,
-  };
 
+export default class permission extends PureComponent {
   componentWillMount() {
     const { dispatch, location } = this.props;
+    dispatch({
+      type: 'permission/getTree',
+      payload: {
+        ...(location.query),
+      },
+    });
     if (location.query && location.query.id) {
       this.setState({
         entityId: location.query.id,
@@ -55,6 +60,17 @@ export default class permission extends PureComponent {
 
   render() {
     const { sysuser: { entity } } = this.props;
+    const { permission: { treeData } } = this.props;
+
+    const loop = (data) => {
+      return data.map((item) => {
+        if (item.children && item.children.length > 0) {
+          return <TreeNode key={item.id} title={item.fullName}>{loop(item.children)}</TreeNode>;
+        }
+        return <TreeNode key={item.id} title={item.fullName} />;
+      });
+    };
+
     const actions = (
       <ButtonGroup>
         <Button onClick={this.configClick.bind(this, 'modules')}>模块访问权限</Button>
@@ -77,24 +93,7 @@ export default class permission extends PureComponent {
         action={actions}
       >
         <Card bordered={false}>
-          <Tree
-            checkable
-            defaultExpandedKeys={['0-0-0', '0-0-1']}
-            defaultSelectedKeys={['0-0-0', '0-0-1']}
-            defaultCheckedKeys={['0-0-0', '0-0-1']}
-            onSelect={this.onSelect}
-            onCheck={this.onCheck}
-          >
-            <TreeNode title="parent 1" key="0-0">
-              <TreeNode title="parent 1-0" key="0-0-0" disabled>
-                <TreeNode title="leaf" key="0-0-0-0" disableCheckbox />
-                <TreeNode title="leaf" key="0-0-0-1" />
-              </TreeNode>
-              <TreeNode title="parent 1-1" key="0-0-1">
-                <TreeNode title={<span style={{ color: '#1890ff' }}>sss</span>} key="0-0-1-0" />
-              </TreeNode>
-            </TreeNode>
-          </Tree>
+          { treeData ? <Tree>{ loop(treeData) }</Tree> : 'loading tree' }
         </Card>
         <FooterToolbar style={{ width: '100%' }}>
           <Button type="primary" htmlType="submit">

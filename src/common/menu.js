@@ -114,12 +114,47 @@ const menuData = [{
     path: 'register-result',
   }],
 }, {
+  name: '微信管理',
+  icon: 'wechat',
+  path: 'wechat',
+  children: [{
+    name: '素材管理',
+    path: 'material',
+  }, {
+    name: '关注回复',
+    path: 'reply',
+  }, {
+    name: '自动回复',
+    path: 'autoreply',
+  }, {
+    name: '关键字回复',
+    path: 'keyreply',
+  }, {
+    name: '菜单管理',
+    path: 'menus',
+  }, {
+    name: '群发管理',
+    path: 'mass',
+  }],
+}, {
   name: '系统管理',
   icon: 'user',
   path: 'system',
   children: [{
     name: '用户管理',
     path: 'user',
+  }, {
+    name: '角色管理',
+    path: 'role',
+  }, {
+    name: '权限管理',
+    path: 'permission',
+  }, {
+    name: '模块管理',
+    path: 'module',
+  }, {
+    name: '部门管理',
+    path: 'organize',
   }],
 }, {
   name: '使用文档',
@@ -145,5 +180,4 @@ function formatter(data, parentPath = '', parentAuthority) {
     return result;
   });
 }
-
 export const getMenuData = () => formatter(menuData);

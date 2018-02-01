@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { routerRedux } from 'dva/router';
-import { Table, Menu, Icon, Dropdown, Divider, message, Modal, Alert } from 'antd';
+import { Table, Menu, Icon, Dropdown, message, Modal } from 'antd';
 import styles from './index.less';
 
 const { confirm } = Modal;
@@ -47,7 +47,7 @@ class UserTable extends PureComponent {
     });
   };
 
-  /** handleSettingClick = (rowid) => {
+  handleSettingClick = (rowid) => {
     const { dispatch, preSetPath } = this.props;
     dispatch(routerRedux.push({
       pathname: `${preSetPath}/permission`,
@@ -55,12 +55,7 @@ class UserTable extends PureComponent {
         id: rowid,
       },
     }));
-  }; */
-
-  showPasswordModal = (row) => {
-    const { handleModalVisible } = this.props;
-    handleModalVisible(row);
-  }
+  };
 
   handleMenuClick = (e) => {
     const { dispatch, queryList, preType, prePath } = this.props;
@@ -100,19 +95,16 @@ class UserTable extends PureComponent {
 
   render() {
     const { data: { list, pagination }, columns, customOp, scroll, loading } = this.props;
-
     const menu = record => (
       <Menu onClick={this.handleMenuClick}>
         <Menu.Item key={`edit_${record.record.id}`}>编辑</Menu.Item>
-        {/** <Menu.Item key={`password_${record.record.id}`}>设置密码</Menu.Item> */}
         <Menu.Item key={`delete_${record.record.id}`}>删除</Menu.Item>
       </Menu>
     );
-
     const MoreBtn = record => (
       <Dropdown overlay={menu(record)} trigger={['click']}>
         <a className="ant-dropdown-link">
-          更多 <Icon type="down" />
+          操作 <Icon type="down" />
         </a>
       </Dropdown>
     );
@@ -123,14 +115,11 @@ class UserTable extends PureComponent {
         title: '操作',
         render: record => (
           <div>
-            {/** <a onClick={this.handleSettingClick.bind(this, record.id)}>配置</a> */}
-            <a onClick={this.showPasswordModal.bind(this, record)}>重置密码</a>
-            <Divider type="vertical" />
             <MoreBtn record={record} />
           </div>
         ),
         fixed: 'right',
-        width: 150,
+        width: 80,
       },
     ];
 
@@ -148,17 +137,6 @@ class UserTable extends PureComponent {
 
     return (
       <div className={styles.standardTable}>
-        <div className={styles.tableAlert}>
-          <Alert
-            message={(
-              <div>
-                新添加用户的默认密码是：<a style={{ fontWeight: 600 }}>welcome</a>， 如需修改请重置密码。
-              </div>
-            )}
-            type="info"
-            showIcon
-          />
-        </div>
         <Table
           loading={loading}
           rowKey={record => record.id}

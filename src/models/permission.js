@@ -1,7 +1,8 @@
-import { queryUser, removeUser, createUser, updateUser, getUser, checkRepeat, resetPassword } from '../services/sysuser';
+import { queryPermission, removePermission, createPermission, updatePermission,
+  getPermission, checkRepeat, getPermissionTree, removePermissionTree } from '../services/permission';
 
 export default {
-  namespace: 'sysuser',
+  namespace: 'permission',
 
   state: {
     data: {
@@ -10,6 +11,7 @@ export default {
     },
     entity: null,
     loading: true,
+    treeData: null,
   },
 
   effects: {
@@ -18,7 +20,7 @@ export default {
         type: 'changeLoading',
         payload: true,
       });
-      const response = yield call(queryUser, payload);
+      const response = yield call(queryPermission, payload);
       yield put({
         type: 'save',
         payload: response,
@@ -29,7 +31,7 @@ export default {
       });
     },
     *add({ payload, callback }, { call, put }) {
-      const response = yield call(createUser, payload);
+      const response = yield call(createPermission, payload);
       yield put({
         type: 'showEntity',
         payload: response.returnData,
@@ -41,23 +43,42 @@ export default {
         type: 'changeLoading',
         payload: true,
       });
-      yield call(removeUser, payload);
+      yield call(removePermission, payload);
       yield put({
         type: 'changeLoading',
         payload: false,
       });
-
       if (callback) callback();
     },
+    *removeTree({ payload, callback }, { call, put }) {
+      yield put({
+        type: 'changeLoading',
+        payload: true,
+      });
+      const response = yield call(removePermissionTree, payload);
+      yield put({
+        type: 'changeLoading',
+        payload: false,
+      });
+      const responseJson = JSON.parse(response);
+      if (callback) callback(responseJson);
+    },
     *get({ payload }, { call, put }) {
-      const response = yield call(getUser, payload);
+      const response = yield call(getPermission, payload);
       yield put({
         type: 'showEntity',
         payload: response,
       });
     },
+    *getTree({ payload }, { call, put }) {
+      const response = yield call(getPermissionTree, payload);
+      yield put({
+        type: 'showTree',
+        payload: response.returnData,
+      });
+    },
     *update({ payload, callback }, { call, put }) {
-      const response = yield call(updateUser, payload);
+      const response = yield call(updatePermission, payload);
       yield put({
         type: 'showEntity',
         payload: response.returnData,
@@ -71,12 +92,15 @@ export default {
       });
       if (callback) callback();
     },
+    *newchildren({ payload, callback }, { put }) {
+      yield put({
+        type: 'showEntity',
+        payload: { parentID: payload.parentID },
+      });
+      if (callback) callback();
+    },
     *checkRepeat({ payload, callback }, { call }) {
       const response = yield call(checkRepeat, payload);
-      if (callback) callback(response);
-    },
-    *resetPassword({ payload, callback }, { call }) {
-      const response = yield call(resetPassword, payload);
       if (callback) callback(response);
     },
   },
@@ -92,6 +116,12 @@ export default {
       return {
         ...state,
         entity: action.payload,
+      };
+    },
+    showTree(state, action) {
+      return {
+        ...state,
+        treeData: action.payload,
       };
     },
     changeLoading(state, action) {
